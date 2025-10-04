@@ -1,122 +1,141 @@
-# 🌎 TEMPO Air Quality Monitoring Web App
+🌍 NASA TEMPO – Air Quality Intelligence System
+AI-powered satellite-driven air quality monitoring and forecasting platform
+🚀 Overview
 
-A modern, interactive web application inspired by **NASA’s TEMPO (Tropospheric Emissions: Monitoring of Pollution)** mission — built to visualize real-time air quality, explain pollutant parameters, and raise public awareness about atmospheric health.
+NASA TEMPO Air Quality Project is a real-time environmental intelligence platform that combines satellite data, ground-based observations, and artificial intelligence to monitor and forecast air pollution across North America.
 
----
+The system leverages:
 
-## 🚀 Overview
+🛰 NASA TEMPO (Tropospheric Emissions: Monitoring of Pollution) satellite data for hourly atmospheric composition
 
-**TEMPO Air Quality App** brings NASA’s atmospheric mission to the web.  
-It combines real scientific context, AQI visualization, and educational components to help users better understand how air quality affects human health and the planet.
+🌡 AirNow and Open-Meteo APIs for local air and weather parameters
 
-From orbit to your browser — this app turns TEMPO’s story and data into an accessible, immersive experience.
+🤖 AI-based Ridge regression model for short-term air quality prediction (next 6 hours)
 
----
+The goal: Make complex atmospheric science visible, interactive, and understandable — empowering people to make healthier decisions about the air they breathe.
 
-## ✨ Features
+🧩 Core Features
+🛰 Real-Time Data Integration
 
-- 🛰️ **Mission Insights** – Learn how NASA’s TEMPO monitors air pollution from space.  
-- 📈 **AQI Visualization** – View pollutant types and their safe ranges (PM2.5, PM10, NO₂, O₃, SO₂, CO).  
-- 🌈 **Color-Coded AQI Scale** – Instantly see whether the air quality is good or hazardous.  
-- 📅 **Mission Timeline** – Explore TEMPO’s journey from launch to ongoing operations.  
-- 🤝 **Collaboration Section** – Highlights NASA, NOAA, and EPA partnership.  
-- 💡 **Educational Purpose** – Connects air quality to UN Sustainable Development Goals (SDG 3 & 13).  
+Combines NASA TEMPO granules (NO₂, O₃, PM2.5) with AirNow and OpenAQ datasets through live API endpoints.
 
----
+🔬 AI-Driven Forecasting
 
-## 🧠 Mission Background
+Implements a Ridge Regression model to predict Air Quality Index (AQI) for the next 6 hours based on:
 
-TEMPO is NASA’s first space-based instrument designed to measure air pollution across **North America hourly** from a geostationary orbit.  
-By observing pollutants such as **O₃**, **NO₂**, **SO₂**, and **aerosols**, it provides critical data for:
-- Air quality forecasting  
-- Climate and environmental studies  
-- Public health decision-making  
+Temporal patterns
 
----
+Temperature & wind correlation
 
-## 🧩 Tech Stack
+Recursive lag learning
 
-**Frontend**
-- React + Vite / Create-React-App  
-- HTML 5 / CSS 3 / JavaScript (ES6)  
-- Responsive design with custom components  
+🌤 Multi-Source Dashboard
 
-**Backend (optional for data APIs)**
-- Python Flask or Node.js Express  
-- RESTful endpoints for real-time AQI data  
+Interactive React + Flask web interface built for clarity:
 
-**Styling**
-- Custom CSS (`About.css`, `Home.css`)  
-- Gradient and glassmorphism design  
-- NASA-inspired dark-sky color palette  
+Home — project overview & mission
 
----
+About — NASA TEMPO story & science behind it
 
-## ⚙️ Installation & Setup
+AirQuality — live AQI map, AI insights, and voice assistant
 
-# Clone this repository
-git clone https://github.com/<your-username>/tempo-airquality.git
+Forecast — predictive analytics and AQI visualization
 
-# Navigate into the project directory
-cd tempo-airquality
+Contact — Team PulsarX profile and communication links
 
-# Install dependencies
-npm install
+💬 Voice & AI Assistant
 
-# Start the development server
-npm start
-Then open http://localhost:3000 in your browser.
+An integrated assistant that interprets AQI values, explains pollution types, and gives health-based suggestions interactively.
 
-🧪 Folder Structure
-java
-Kodu kopyala
-tempo-airquality/
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Home.js
-│   │   │   ├── About.js
-│   │   │   └── ...
-│   │   ├── images/
-│   │   ├── App.js
-│   │   └── index.js
-│   ├── public/
-│   └── package.json
-│
-└── backend/ (optional)
-    ├── app.py / server.js
-    └── requirements.txt / package.json
-📚 Data Sources
-NASA Earthdata TEMPO Portal
+💚 Health & Safety Insights
 
-AirNow API – Real-time air quality monitoring data
+For each AQI range, the platform provides real-time health recommendations:
 
-OpenAQ – Open-source global air-quality database
+0–50: Safe for all activities
 
-🧭 Future Improvements
-🔮 Integrate live AQI data from NASA API
+51–100: Moderate caution for sensitive groups
 
-🌍 Add interactive pollution maps
+101–150: Limit prolonged outdoor activity
 
-🤖 Implement AI-based AQI forecasting models
+150+: Stay indoors; mask recommended
 
-📱 Build a mobile version using Flutter
+🧠 Backend Intelligence
 
-🧑‍💻 Contributors
-Name	Role
-Hatice Gazel	Developer & Project Lead
-PulsarX	Research & Design
+The backend (app.py) is built with Flask, handling both data aggregation and predictive modeling:
 
-🌐 Related Missions
-NASA TEMPO : https://tempo.si.edu/
+Endpoint	Description
+/airnow	Fetches current pollutant concentrations from AirNow API
+/tempo	Retrieves NASA TEMPO NO₂ granule metadata from NASA CMR API
+/combined	Merges TEMPO + AirNow results for a unified atmospheric snapshot
+/forecast	Performs AI-based AQI forecasting (using Ridge regression + weather inputs)
+🧮 Model Workflow
 
-NOAA Air Resources Laboratory : https://www.ready.noaa.gov/
+Collects last 24h AirNow PM2.5 history
 
-EPA AirNow : https://www.airnow.gov/
+Retrieves past & next hours weather from Open-Meteo
 
-🪐 License
-This project is released under the MIT License.
-Feel free to use, modify, and share it for educational or non-commercial purposes.
+Merges datasets into a time series DataFrame
 
-✨ “From space to Earth — monitoring the air that connects us all.”
+Trains a Ridge regression with features (time, temperature, wind, lag1)
+
+Produces next-6-hour AQI predictions and generates a natural-language advisory
+
+🛰 NASA TEMPO Context
+
+TEMPO (Tropospheric Emissions: Monitoring of Pollution) is a NASA mission observing atmospheric pollution from geostationary orbit (~35,000 km above Earth).
+It measures trace gases such as NO₂, SO₂, and O₃ every hour, revolutionizing how we monitor air quality in North America.
+
+Our system integrates this data to translate raw granules into actionable public insights.
+
+🧑‍💻 Team PulsarX
+Member	Role	Focus
+Hatice Gazel	Software Engineer	AI Model & Backend (Flask + Ridge Regression)
+Teammate Name	Frontend Developer	React UI/UX Design
+Teammate Name	Data Scientist	Atmospheric Data Processing
+Teammate Name	Project Manager	Communication & Outreach
+
+“We don’t just visualize data — we give it meaning.”
+
+💬 Key Technologies
+
+Flask (Python) — backend APIs, ML model integration
+
+React.js — dynamic frontend and real-time AQI dashboard
+
+scikit-learn (Ridge Regression) — AI forecasting
+
+pandas, NumPy — data cleaning and time-series operations
+
+NASA CMR API, AirNow, Open-Meteo — live environmental data sources
+
+Voice Assistant — custom dialogue engine for AQI advice
+
+🌈 Environmental Impact
+
+This project aligns with the United Nations Sustainable Development Goals (SDGs):
+
+Goal 3: Good Health & Well-Being 🫁
+
+Goal 13: Climate Action 🌍
+
+Goal 11: Sustainable Cities & Communities 🌆
+
+By transforming NASA’s atmospheric data into human-centered insights, we aim to increase awareness, promote data transparency, and empower people to act for cleaner air.
+
+🧭 Vision
+
+“From space to street level — making the invisible visible.”
+
+Our vision is to continue expanding this system with global datasets, integrating predictive alerts, and connecting communities through open-source environmental technology.
+
+🛰 Acknowledgments
+
+NASA Earth Science Data Systems (ESDS) for open TEMPO data
+
+AirNow API by US EPA
+
+Open-Meteo for providing free weather forecasts
+
+Space Apps Challenge for inspiring collaborative innovation
+
+Team PulsarX — for combining science, design, and code into impact
