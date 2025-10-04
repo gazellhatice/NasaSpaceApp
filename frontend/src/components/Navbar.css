@@ -4,9 +4,9 @@
   width: 100%;
   z-index: 1000;
   display: flex;
-  justify-content: center; /* eskiden space-between idi */
+  justify-content: center;
   align-items: center;
-  gap: 600px; /* logo ile menü arası boşluk */
+  gap: 600px; /* space between logo and menu */
   padding: 10px 30px;
   height: 60px;
   background: rgba(10, 15, 31, 0.4);
@@ -41,7 +41,7 @@
 .nav-links-pro {
   list-style: none;
   display: flex;
-  flex-wrap: wrap; /* taşma olmasın */
+  flex-wrap: wrap; 
   gap: 24px;
   align-items: center;
   justify-content: center;
@@ -148,7 +148,7 @@
   animation: spin 6s linear infinite;
 }
 
-/* Gezegenin etrafındaki halka */
+/* ring around the planet */
 .planet::after {
   content: "";
   position: absolute;
@@ -162,7 +162,7 @@
   animation: orbit 4s linear infinite;
 }
 
-/* Yazı kısmı */
+/* Text section */
 .logo-text {
   font-size: 1.3rem;
   font-weight: 700;

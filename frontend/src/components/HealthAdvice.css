@@ -6,7 +6,7 @@
   padding: 12px;
   backdrop-filter: blur(10px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  width: 100%; /* sol kartın genişliğini otomatik al */
+  width: 100%;
 }
 
 
@@ -18,19 +18,19 @@
   letter-spacing: 0.5px;
 }
 
-/* 💡 Kartları yatay hizalayalım */
-/* 💫 Kartları tam yatay tek sıraya diz */
+/* 💡 Let's align the cards horizontally. */
+/* 💫 Arrange the cards in a single horizontal row. */
 .advice-grid {
   display: flex;
   justify-content: space-between;
   align-items: stretch;
   gap: 14px;
-  flex-wrap: nowrap; /* 🔹 artık alt satıra geçmeyecek */
+  flex-wrap: nowrap;
 }
 
-/* Kart stilleri */
+/* Card styles */
 .advice-card {
-  flex: 1;                /* 🔹 Hepsi eşit genişlikte */
+  flex: 1;                /* 🔹 All of equal width */
   background: rgba(11, 61, 145, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
@@ -58,10 +58,10 @@
   color: #cdd8f5;
 }
 
-/* Mobil uyum: küçük ekranda alt alta geçsin */
+/* Mobile compatibility: scroll on small screens */
 @media (max-width: 992px) {
   .advice-grid {
-    flex-wrap: wrap; /* 🔹 küçük ekranda yeniden kır */
+    flex-wrap: wrap; 
   }
   .advice-card {
     flex: 1 1 calc(50% - 10px);

@@ -16,9 +16,9 @@ CORS(app)
 AIRNOW_KEY = os.getenv("AIRNOW_KEY", "")
 NASA_TOKEN = os.getenv("NASA_TOKEN", "")
 
-# 🔹 CMR araması için sabitler
+# 🔹 Constants for CMR search
 CMR_GRANULES_URL = "https://cmr.earthdata.nasa.gov/search/granules.json"
-# TEMPO NO2 L2 V03 koleksiyonunun concept-id'si (ASDC / LARC_CLOUD)
+# Concept-id of the TEMPO NO2 L2 V03 collection (ASDC / LARC_CLOUD)
 TEMPO_NO2_L2_V03 = "C2930725014-LARC_CLOUD"   # NO2 L2 (V03, PROVISIONAL)
 
 @app.route('/')
@@ -44,7 +44,7 @@ def airnow():
 
         raw = r.json()
 
-        # Normalize: tek kayıtta PM2.5, O3 vb. alanlar
+        # Normalized: PM2.5, O3 etc. fields in a single record
         merged = {
             "location": {"lat": float(lat), "lon": float(lon)},
             "reportingArea": None,
@@ -59,7 +59,7 @@ def airnow():
             if not merged["reportingArea"]:
                 merged["reportingArea"] = item.get("ReportingArea")
                 merged["stateCode"] = item.get("StateCode")
-                # DateObserved + HourObserved birleştirme:
+                # Date Observed + Hour Observed combination:
                 merged["observedAt"] = f'{item.get("DateObserved","").strip()} {item.get("HourObserved", "")}:00'
             if p:
                 merged["aqi"][p] = item.get("AQI")
@@ -78,7 +78,7 @@ def tempo():
     lon = float(request.args.get("lon", "-74.0060"))
     delta = float(request.args.get("delta", "0.2"))
 
-    # 🔹 İsteğe bağlı tarih (YYYY-MM-DD formatında)
+    # 🔹 Optional date (in YYYY-MM-DD format)
     date_str = request.args.get("date")
     if date_str:
         try:
@@ -88,7 +88,7 @@ def tempo():
     else:
         base = dt.datetime.utcnow()
 
-    # Günün başlangıç ve bitişi
+    # Beginning and ending of the day
     start = base.replace(hour=0, minute=0, second=0, microsecond=0).isoformat() + "Z"
     end   = base.replace(hour=23, minute=59, second=59, microsecond=0).isoformat() + "Z"
 
@@ -146,9 +146,9 @@ def combined():
     lon = request.args.get("lon", "-74.0060")
     date = request.args.get("date")  # YYYY-MM-DD
 
-    # 🔹 AirNow: tarih varsa historical, yoksa current
+    # 🔹 AirNow: historical if there is a date, current if there is no date
     if date:
-    # AirNow historical için format: 2024-05-01T00-0000
+    # Format for AirNow historical: 2024-05-01T00-0000
         airnow_url = (
         "https://www.airnowapi.org/aq/observation/latLong/historical/"
         f"?format=application/json&latitude={lat}&longitude={lon}"
@@ -175,7 +175,7 @@ def combined():
 
 
 
-    # 🔹 TEMPO (her zamanki gibi)
+    # 🔹 TEMPO
     tempo_url = f"http://127.0.0.1:5000/tempo?lat={lat}&lon={lon}"
     if date:
         tempo_url += f"&date={date}"
@@ -199,7 +199,7 @@ def _airnow_historical_hour(lat: str, lon: str, date_str: str, hour: int, distan
     Tek bir saat için AirNow historical endpoint çağrısı (PM2.5 öncelikli).
     Tarih formatı: YYYY-MM-DD, saat: 0..23
     """
-    # AirNow Historical formatı: 2024-05-01T00-0000
+    # AirNow Historical format: 2024-05-01T00-0000
     slot = f"{date_str}T{hour:02d}-0000"
     url = (
         "https://www.airnowapi.org/aq/observation/latLong/historical/"
@@ -220,12 +220,12 @@ def _collect_airnow_last_24h(lat: str, lon: str) -> List[Dict[str, Any]]:
     AirNow historical verileri toplanır (PM2.5 varsa onu seçeriz).
     """
     now = dt.datetime.utcnow()
-    # Dün ve bugün (UTC) için iki tarih dizesi
+    # Two date strings for yesterday and today (UTC)
     d0 = (now - dt.timedelta(days=1)).date().isoformat()
     d1 = now.date().isoformat()
 
     points = []  # {ts: datetime, aqi: int, param: str}
-    # Son 24 saat = now-23 .. now saatleri
+    # Last 24 hours = now-23 .. now hours
     hours = [now - dt.timedelta(hours=h) for h in range(23, -1, -1)]
     for hdt in hours:
         d = hdt.date().isoformat()
@@ -233,7 +233,7 @@ def _collect_airnow_last_24h(lat: str, lon: str) -> List[Dict[str, Any]]:
         resp = _airnow_historical_hour(lat, lon, d, h)
         if not resp:
             continue
-        # Öncelik PM2.5, yoksa O3'ü deneriz:
+        # Priority is PM2.5, otherwise we try O3:
         pm25 = [it for it in resp if str(it.get("ParameterName", "")).lower() in ("pm2.5", "pm25", "pm 2.5")]
         use = pm25[0] if pm25 else (resp[0] if resp else None)
         if use and use.get("AQI") is not None:
@@ -243,7 +243,7 @@ def _collect_airnow_last_24h(lat: str, lon: str) -> List[Dict[str, Any]]:
                 "param": use.get("ParameterName", "AQI")
             })
 
-    # Aynı saate birden fazla kayıt gelirse sonuncuyu tut
+    # If more than one record comes for the same time, keep the last one
     dedup = {}
     for p in points:
         dedup[p["ts"]] = p
@@ -255,7 +255,7 @@ def _open_meteo_hourly(lat: float, lon: float, hours_back: int = 24, hours_ahead
     Open-Meteo (ücretsiz, anahtarsız) ile geçmiş + kısa vadeli hava durumu.
     Geriye dönük ve ileri saat tahminlerini tek bir DF halinde döndürür.
     """
-    # Not: open-meteo geçmiş saatleri `past_hours` parametresiyle sağlar.
+    # Note: open-meteo provides past hours with the `past_hours` parameter.
     url = (
         "https://api.open-meteo.com/v1/forecast"
         f"?latitude={lat}&longitude={lon}"
@@ -278,7 +278,7 @@ def _open_meteo_hourly(lat: float, lon: float, hours_back: int = 24, hours_ahead
         })
         return df
     except Exception:
-        # Hava durumu yoksa boş bir DF döndür (sütunlar sabit)
+        # If there is no weather, return an empty DF (columns are fixed)
         return pd.DataFrame(columns=["ts", "temp", "wind"])
     
 def _normalize_airnow_payload(raw, lat, lon):
@@ -307,20 +307,20 @@ def _fit_and_forecast_aqi(history_df: pd.DataFrame, weather_df: pd.DataFrame, ho
     Model: Ridge regresyon (hızlı ve sağlam)
     Tahmin: recursive (her saati bir önceki tahmin lag1 olarak)
     """
-    # Tarihleri birleştir
+    # Combine dates
     df = history_df.merge(weather_df, on="ts", how="left")
 
-    # Zaman indeksini sayısal yapalım (0..N-1)
+    # Let's make the time index numeric (0..N-1)
     df = df.sort_values("ts").reset_index(drop=True)
     df["t"] = np.arange(len(df))
 
     # Lag1
     df["lag1"] = df["aqi"].shift(1)
 
-    # Eğitim verisi
-    train = df.dropna(subset=["aqi", "lag1"])  # lag1 üretmek için en az 2 nokta gerekir
+    # Training data
+    train = df.dropna(subset=["aqi", "lag1"])  # At least 2 points are required to produce lag1.
     if len(train) < 8:
-        # Veri yetersizse basit hareketli ortalama fallback
+        # If data is insufficient, simple moving average fallback
         last = df["aqi"].dropna().iloc[-1] if df["aqi"].dropna().size else None
         baseline = df["aqi"].dropna().rolling(3).mean().iloc[-1] if df["aqi"].dropna().size >= 3 else last
         preds = []
@@ -338,18 +338,18 @@ def _fit_and_forecast_aqi(history_df: pd.DataFrame, weather_df: pd.DataFrame, ho
     model = Ridge(alpha=1.0)
     model.fit(X, y)
 
-    # Gelecek saatler için iskelet zamanlar
+    # Skeleton times for the hours to come
     last_ts = df["ts"].iloc[-1]
     future_times = [last_ts + pd.Timedelta(hours=i+1) for i in range(horizon)]
 
-    # Hava durumunu geleceğe al (mevcut `weather_df` forecast_hours ile birlikte geldi)
+    # Get weather into the future (current `weather_df` comes with forecast_hours)
     weather_future = weather_df[weather_df["ts"].isin(future_times)].copy()
-    # Eksik forecast varsa approx doldur:
+    # If there is a missing forecast, fill in approx:
     if len(weather_future) < horizon:
         add_rows = []
         for t in future_times:
             if t not in set(weather_future["ts"]):
-                # Son bilinen değerlerle doldur
+                # Fill with last known values
                 add_rows.append({
                     "ts": t,
                     "temp": weather_df["temp"].iloc[-1] if len(weather_df) else np.nan,
@@ -359,9 +359,9 @@ def _fit_and_forecast_aqi(history_df: pd.DataFrame, weather_df: pd.DataFrame, ho
             weather_future = pd.concat([weather_future, pd.DataFrame(add_rows)], ignore_index=True)
     weather_future = weather_future.sort_values("ts").reset_index(drop=True)
 
-    # Recursive tahmin: her adımda lag1 = bir önceki tahmin
+    # Recursive estimation: at each step lag1 = previous estimation
     preds = []
-    lag1 = df["aqi"].iloc[-1]  # son gerçek gözlem
+    lag1 = df["aqi"].iloc[-1]  # last real observation
     t_base = int(df["t"].iloc[-1])
 
     for i, row in weather_future.iterrows():
@@ -373,14 +373,14 @@ def _fit_and_forecast_aqi(history_df: pd.DataFrame, weather_df: pd.DataFrame, ho
         }]).fillna(method="ffill").fillna(method="bfill")
 
         y_hat = float(model.predict(features)[0])
-        # sınırları makul tut (0..300)
+        # keep limits reasonable (0..300)
         y_hat = max(0.0, min(300.0, y_hat))
         preds.append({
             "ts": row["ts"].isoformat(),
             "aqi_pred": y_hat,
             "method": "ridge+t,temp,wind,lag1"
         })
-        lag1 = y_hat  # bir sonraki saat için
+        lag1 = y_hat  # for the next hour
 
     return {
         "model": "ridge",
@@ -409,7 +409,7 @@ def forecast():
     lon = request.args.get("lon", "-74.0060")
     horizon = int(request.args.get("horizon", "6"))
 
-    # 1) Son 24 saat AirNow PM2.5 AQI topla
+    # 1) Collect last 24 hours AirNow PM2.5 AQI
     history = _collect_airnow_last_24h(lat, lon)
     if not history:
         return jsonify({
@@ -420,16 +420,16 @@ def forecast():
     hist_df = pd.DataFrame(history)  # columns: ts, aqi, param
     hist_df = hist_df.sort_values("ts").reset_index(drop=True)
 
-    # 2) Hava durumu (geçmiş + gelecek)
+    # 2) Weather (past + future)
     wx_df = _open_meteo_hourly(float(lat), float(lon), hours_back=24, hours_ahead=horizon)
-    # Zaman uyumu için saat başı yuvarlayalım
+    # Let's round up the hour for time consistency.
     hist_df["ts"] = pd.to_datetime(hist_df["ts"]).dt.floor("H")
     wx_df["ts"] = pd.to_datetime(wx_df["ts"]).dt.floor("H")
 
-    # 3) Modeli kur ve tahmin et
+    # 3) Build the model and predict
     model_out = _fit_and_forecast_aqi(hist_df[["ts", "aqi"]], wx_df[["ts", "temp", "wind"]], horizon=horizon)
 
-    # 4) Son tahminin uyarısını ver
+    # 4) Give warning of last prediction
     last_pred = model_out.get("predictions", [{}])[-1].get("aqi_pred") if model_out.get("predictions") else None
     advice = _advisory(last_pred)
 

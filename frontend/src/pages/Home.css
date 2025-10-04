@@ -210,3 +210,128 @@
   from { transform: translateY(0px); }
   to { transform: translateY(-1000px); }
 }
+
+/* ===== LIVE AQI CARD ===== */
+.aqi-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  padding: 18px 25px;
+  margin: 25px auto 30px auto;
+  max-width: 360px;
+  color: #eaf2ff;
+  box-shadow: 0 0 20px rgba(86, 182, 247, 0.25);
+  backdrop-filter: blur(6px);
+  transition: transform 0.4s ease;
+}
+.aqi-card:hover {
+  transform: scale(1.03);
+}
+.aqi-card h4 {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+.aqi-value.good {
+  color: #2ecc71;
+}
+.aqi-value.moderate {
+  color: #f1c40f;
+}
+.aqi-value.unhealthy {
+  color: #e74c3c;
+}
+
+/* ===== FEATURES UPGRADE ===== */
+.feature-intro {
+  max-width: 700px;
+  margin: 0 auto 40px auto;
+  color: #cfe3ff;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.mini-data {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: #9fd8ff;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 6px 10px;
+  display: inline-block;
+}
+
+/* ===== CHALLENGE IMPROVEMENT ===== */
+.mission-box {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 15px 20px;
+  margin: 20px 0 25px 0;
+  color: #eaf2ff;
+  box-shadow: 0 0 20px rgba(86, 182, 247, 0.25);
+  backdrop-filter: blur(6px);
+}
+.mission-box h4 {
+  color: #56b6f7;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.image-caption {
+  font-size: 0.9rem;
+  color: #b8c8ff;
+  margin-top: 10px;
+  text-align: center;
+  opacity: 0.9;
+}
+.text p {
+  line-height: 1.6;
+  color: #d8e4ff;
+}
+/* ===== CTA UPGRADE ===== */
+.cta-pro {
+  text-align: center;
+  padding: 120px 20px;
+  background: radial-gradient(circle at 30% 40%, #0b3d91, #08152e 80%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-sub {
+  max-width: 700px;
+  margin: 0 auto 35px auto;
+  font-size: 1.1rem;
+  color: #cfe3ff;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.cta-footer {
+  margin-top: 40px;
+  font-size: 0.9rem;
+  color: #9ecfff;
+  opacity: 0.85;
+}
+
+/* optional glowing waves */
+.cta-pro::after {
+  content: "";
+  position: absolute;
+  top: -100px;
+  left: 0;
+  width: 100%;
+  height: 300px;
+  background: radial-gradient(circle at 50% 0%, rgba(86,182,247,0.2), transparent 70%);
+  animation: waveGlow 6s ease-in-out infinite alternate;
+}
+
+@keyframes waveGlow {
+  from { opacity: 0.4; transform: translateY(0); }
+  to { opacity: 0.8; transform: translateY(20px); }
+}

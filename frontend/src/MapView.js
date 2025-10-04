@@ -29,7 +29,7 @@ export default function MapView({ lat, lon, onPick }) {
       />
       <Marker position={[lat, lon]} icon={markerIcon}>
         <Popup>
-          Seçili Konum <br /> {lat.toFixed(4)}, {lon.toFixed(4)}
+          Selected Location <br /> {lat.toFixed(4)}, {lon.toFixed(4)}
         </Popup>
       </Marker>
       <ClickToSet onPick={onPick} />

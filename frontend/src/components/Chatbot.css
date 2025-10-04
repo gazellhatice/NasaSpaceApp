@@ -76,7 +76,7 @@
   gap: 6px;
 }
 
-/* Ortak mesaj stili */
+/* Common message style */
 .chat-msg {
   padding: 8px 12px;
   border-radius: 12px;
@@ -86,20 +86,20 @@
   width: fit-content;
 }
 
-/* 💬 Kullanıcı mesajı (senin mesajların) */
+/* 💬 User message  */
 .chat-msg.user {
   background: #0b3d91;
   color: white;
-  margin-left: auto; /* 🔹 tamamen sağa hizalar */
+  margin-left: auto; /* 🔹 fully right aligned */
   margin-right: 0;
   border-bottom-right-radius: 0;
 }
 
-/* 🤖 Bot mesajı */
+/* 🤖 Bot message */
 .chat-msg.bot {
   background: #f2f2f2;
   color: #333;
-  margin-right: auto; /* 🔹 tamamen sola hizalar */
+  margin-right: auto; /* 🔹 fully left aligned */
   border-bottom-left-radius: 0;
 }
 

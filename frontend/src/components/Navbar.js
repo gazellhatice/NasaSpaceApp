@@ -15,7 +15,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Menü tıklanınca kapanır (mobil)
+  // The menu closes when clicked (mobile)
   useEffect(() => {
     setMenuOpen(false);
   }, [location]);

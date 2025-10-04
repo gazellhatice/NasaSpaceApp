@@ -42,13 +42,14 @@ export default function Forecast() {
   return (
     <div className="forecast-page-pro">
       {/* Header */}
-      <header className="forecast-header-pro glassy">
-        <h1>🚀 AQI Forecast Dashboard</h1>
+      <header className="forecast-header-pro glassy enhanced">
+        <h1>🌤 AI-Powered Air Quality Forecast</h1>
+        <div className="hero-line"></div>
         <p>
-          Predicting air quality trends using{" "}
-          <span className="tempo">NASA TEMPO</span> +{" "}
-          <span className="airnow">AirNow</span> +{" "}
-          <span className="ai">AI Insight</span> 🌍
+          Combining <span className="tempo">NASA TEMPO</span> satellite data,{" "}
+          <span className="airnow">AirNow</span> sensors, and{" "}
+          <span className="ai">Artificial Intelligence</span> to predict how
+          your air will change — hour by hour.
         </p>
       </header>
 
@@ -82,6 +83,10 @@ export default function Forecast() {
             {loading ? "Loading..." : "Get Forecast"}
           </button>
         </div>
+        <p className="input-tip">
+          💡 Tip: Enter coordinates or use your current GPS location for
+          accurate results.
+        </p>
       </div>
 
       {error && <div className="error-box-pro">{error}</div>}
@@ -96,13 +101,14 @@ export default function Forecast() {
               <AQIGauge value={latestAQI ?? 0} />
               <p className="gauge-label">
                 {latestAQI
-                  ? `${latestAQI <= 50
-                      ? "Good"
-                      : latestAQI <= 100
-                      ? "Moderate"
-                      : latestAQI <= 150
-                      ? "Unhealthy for Sensitive Groups"
-                      : "Unhealthy"
+                  ? `${
+                      latestAQI <= 50
+                        ? "Good"
+                        : latestAQI <= 100
+                        ? "Moderate"
+                        : latestAQI <= 150
+                        ? "Unhealthy for Sensitive Groups"
+                        : "Unhealthy"
                     }`
                   : "No data"}
               </p>
@@ -136,7 +142,18 @@ export default function Forecast() {
           {/* Advisory */}
           <div className="advisory-box-pro">
             <h3>🩺 Health Advisory</h3>
-            <p>{forecast.advisory || "No advisory available."}</p>
+            <p>
+              {latestAQI <= 50 &&
+                "✅ Air quality is excellent. Outdoor activities are safe!"}
+              {latestAQI > 50 &&
+                latestAQI <= 100 &&
+                "⚠️ Moderate air quality. Sensitive individuals should stay alert."}
+              {latestAQI > 100 &&
+                latestAQI <= 150 &&
+                "😷 Unhealthy for sensitive groups. Reduce outdoor time."}
+              {latestAQI > 150 &&
+                "🚫 Poor air quality. Stay indoors and wear a mask if outside."}
+            </p>
           </div>
 
           {/* Predictions */}
@@ -160,6 +177,7 @@ export default function Forecast() {
                         })}
                       </td>
                       <td
+                        className="aqi-cell"
                         style={{
                           color:
                             p.aqi_pred <= 50
@@ -171,7 +189,11 @@ export default function Forecast() {
                               : "#e74c3c",
                         }}
                       >
-                        {Math.round(p.aqi_pred)}
+                        {Math.round(p.aqi_pred)}{" "}
+                        {i > 0 &&
+                          (p.aqi_pred > forecast.predictions[i - 1].aqi_pred
+                            ? "⬆️"
+                            : "⬇️")}
                       </td>
                     </tr>
                   ))}

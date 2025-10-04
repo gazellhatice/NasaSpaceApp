@@ -47,7 +47,7 @@ export default function AirQuality() {
   const [err, setErr] = useState("");
   const [data, setData] = useState(null);
   const [weather, setWeather] = useState(null);
-  const [openaq, setOpenAQ] = useState([]); // heatmap için istasyonlar
+  const [openaq, setOpenAQ] = useState([]); // stations for heatmap
   const [selectedGranuleIdx, setSelectedGranuleIdx] = useState(0);
 
   async function load() {
@@ -58,13 +58,13 @@ export default function AirQuality() {
       const d = await fetchCombined(coords.lat, coords.lon, date);
       setData(d);
 
-      // Open-Meteo: anlık hava durumu
+      // Open-Meteo: live weather forecast
       const wxUrl = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current=temperature_2m,relative_humidity_2m,windspeed_10m&timezone=auto`;
       const wxResp = await fetch(wxUrl);
       const wxData = await wxResp.json();
       setWeather(wxData.current || null);
 
-      // OpenAQ: yakın istasyonlardan ısı haritası noktaları
+      // OpenAQ: heatmap points from nearby stations
       const rad = 25000; // 25 km
       const oaUrl = `https://api.openaq.org/v2/measurements?coordinates=${coords.lat},${coords.lon}&radius=${rad}&limit=100&parameter=pm25,pm10,no2,o3&order_by=datetime&sort=desc`;
       const oaResp = await fetch(oaUrl);
@@ -78,11 +78,11 @@ export default function AirQuality() {
   }
 
   useEffect(() => {
-    load(); /* ilk yükleme */
+    load(); /* first installation */
   }, []);
   const airnow = data?.airnow;
 
-  // TEMPO granüllerini zaman çizelgesine hazırlama
+  // Preparing TEMPO granules for the schedule
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const tempoGranules = data?.tempo?.granules || [];
   const tempoTimeline = useMemo(
@@ -114,7 +114,7 @@ export default function AirQuality() {
     }
   }, [bestAQI]);
 
-  // Isı haritası noktaları (OpenAQ verisinden normalize yoğunluk)
+  // Heatmap points (normalized density from OpenAQ data)
   const heatPoints = useMemo(() => {
     if (!openaq.length) return [];
     return openaq.map((it) => {
@@ -122,12 +122,12 @@ export default function AirQuality() {
       return {
         lat: it.coordinates.latitude,
         lon: it.coordinates.longitude,
-        intensity: aqiLike, // 0-300 arası kullanacağız
+        intensity: aqiLike, // We will use between 0-300
       };
     });
   }, [openaq]);
 
-  // Parametre ölçümünü AQI-benzeri skala 0..300’a yaklaştır (basit normalize)
+  // Move parameter measurement closer to AQI-like scale 0..300 (simple normalized)
   function normalizeToAQI(param, value) {
     if (value == null) return 0;
     const v = Number(value);
@@ -145,25 +145,26 @@ export default function AirQuality() {
     }
   }
 
-  // Recharts için AirNow veri dönüştürme
+  // AirNow data conversion for Recharts
   const airnowSeries = airnow?.aqi
     ? Object.entries(airnow.aqi).map(([k, v]) => ({ name: k, value: v }))
     : [];
 
-  // Seçili granül detayını göster
+  // Show selected granule detail
   const activeGranule = tempoGranules[selectedGranuleIdx] || null;
 
   return (
     <div className="dashboard pro">
-      <header className="dashboard-header glass">
+      <header className="dashboard-header glass pro-header">
         <div className="branding">
-          <h1>🚀 TEMPO Assistant</h1>
+          <h1>🌎 NASA TEMPO Assistant</h1>
           <p>
-            Real-time air quality intelligence dashboard with NASA TEMPO +
-            AirNow + OpenAQ + Open-Meteo.
+            Real-time Air Intelligence powered by <b>TEMPO Satellite</b> &
+            Global Open Data — explore the air you breathe, anywhere on Earth.
           </p>
         </div>
-        <div className="header-actions">
+
+        <div className="header-controls">
           <div className="inputs">
             <input
               type="number"
@@ -188,12 +189,13 @@ export default function AirQuality() {
               value={date}
               onChange={(e) => setDate(e.target.value)}
             />
-            <button className="btn-primary" onClick={load} disabled={loading}>
-              {loading ? "Loading..." : "Refresh"}
+            <button className="btn-refresh" onClick={load} disabled={loading}>
+              {loading ? "🔄 Loading..." : "🌤 Refresh Data"}
             </button>
           </div>
+
           <div className="badges">
-            <span className="badge ok">TEMPO</span>
+            <span className="badge ok">NASA TEMPO</span>
             <span className="badge ok">AirNow</span>
             <span className="badge ok">OpenAQ</span>
             <span className="badge ok">Weather</span>
@@ -218,61 +220,66 @@ export default function AirQuality() {
           <div className="loading-card"></div>
         </div>
       )}
-      <div className="top-grid">
-        <div className="card big-card">
-          <div className="big-card-left">
-            <div className="aqi-top">
+      <div className="top-grid pro-layout">
+        {/* LEFT PANEL — AQI + AI INSIGHTS */}
+        <div className="card main-left">
+          <div className="aqi-summary">
+            <div className="aqi-gauge-wrap">
               <AQIGauge value={bestAQI ?? 0} />
-              <div className="aqi-meta">
-                <div
-                  className="aqi-number"
-                  style={{ color: aqiColor(bestAQI) }}
-                >
-                  {bestAQI ?? "—"}
-                </div>
-                <div className="aqi-advisory">{advisory}</div>
-                {weather && (
-                  <div className="wx-line">
-                    🌤 {weather.temperature_2m}°C · 💨 {weather.windspeed_10m}{" "}
-                    m/s · 💧 {weather.relative_humidity_2m}%
-                  </div>
-                )}
-                {airnowSeries.length > 1 && (
-                  <div className="aqi-trend-line">
-                    {(() => {
-                      const trend =
-                        airnowSeries[airnowSeries.length - 1].value -
-                        airnowSeries[0].value;
-                      if (trend < 0)
-                        return (
-                          <p>
-                            🌤 AQI improved by {Math.abs(trend)} points since
-                            yesterday.
-                          </p>
-                        );
-                      if (trend > 0)
-                        return (
-                          <p>
-                            ⚠️ AQI increased by {trend} points since yesterday.
-                          </p>
-                        );
-                      return (
-                        <p>😌 AQI remains stable compared to yesterday.</p>
-                      );
-                    })()}
-                  </div>
-                )}
+            </div>
+
+            <div className="aqi-info">
+              <h2>Current Air Quality</h2>
+              <div className="aqi-number" style={{ color: aqiColor(bestAQI) }}>
+                {bestAQI ?? "—"}
               </div>
+              <p className="aqi-advisory">{advisory}</p>
+              {weather && (
+                <p className="weather-line">
+                  🌤 {weather.temperature_2m}°C · 💧{" "}
+                  {weather.relative_humidity_2m}% · 💨 {weather.windspeed_10m}{" "}
+                  m/s
+                </p>
+              )}
             </div>
           </div>
 
-          <div className="big-card-right">
-            <AIExplanationCard
-              aqi={bestAQI}
-              airnow={airnow}
-              weather={weather}
-              openaq={openaq}
-            />
+          {/* AI EXPLANATION */}
+          <AIExplanationCard
+            aqi={bestAQI}
+            airnow={airnow}
+            weather={weather}
+            openaq={openaq}
+          />
+
+          {/* TREND INFO */}
+          {airnowSeries.length > 1 && (
+            <div className="trend-box">
+              {(() => {
+                const diff =
+                  airnowSeries[airnowSeries.length - 1].value -
+                  airnowSeries[0].value;
+                if (diff < 0)
+                  return (
+                    <span className="trend good">
+                      🌿 AQI improved by {Math.abs(diff)} points
+                    </span>
+                  );
+                if (diff > 0)
+                  return (
+                    <span className="trend bad">
+                      ⚠️ AQI rose by {diff} points since yesterday
+                    </span>
+                  );
+                return (
+                  <span className="trend stable">😌 AQI is stable today</span>
+                );
+              })()}
+            </div>
+          )}
+
+          {/* VOICE ASSISTANT */}
+          <div className="voice-wrap">
             <VoiceAssistant
               aqi={bestAQI}
               advisory={advisory}
@@ -281,89 +288,223 @@ export default function AirQuality() {
           </div>
         </div>
 
-        <div className="map-card pro-map">
-          <h3>🗺️ Interactive Map — Heatmap + Clouds</h3>
-          <MapView
-            lat={coords.lat}
-            lon={coords.lon}
-            onPick={(p) => setCoords(p)}
-            markerColor={aqiColor(bestAQI)}
-            tooltipText={`AQI: ${bestAQI ?? "—"} (${advisory})`}
-            heatPoints={heatPoints}
-            showClouds={true}
-          />
+        {/* RIGHT PANEL — MAP */}
+        <div className="card pro-map map-enhanced">
+          <h3>🗺️ Interactive NASA TEMPO Map</h3>
+          <p className="map-desc">
+            Visualizing real-time pollution intensity using OpenAQ stations and
+            TEMPO satellite overlays.
+          </p>
+          <div className="map-wrap">
+            <MapView
+              lat={coords.lat}
+              lon={coords.lon}
+              onPick={(p) => setCoords(p)}
+              markerColor={aqiColor(bestAQI)}
+              tooltipText={`AQI: ${bestAQI ?? "—"} (${advisory})`}
+              heatPoints={heatPoints}
+              showClouds={true}
+            />
+          </div>
+          <div className="map-legend">
+            <span>🟢 Good</span>
+            <span>🟡 Moderate</span>
+            <span>🟠 Unhealthy</span>
+            <span>🔴 Very Unhealthy</span>
+          </div>
         </div>
       </div>
-      <div className="card health-wide">
-        <HealthAdvice aqi={bestAQI} />
-      </div>
+      {/* ===== HEALTH & SAFETY ADVICE ===== */}
+      <section className="health-pro">
+        <h2>💚 Health & Safety Advice</h2>
+        <p className="health-sub">
+          AI-generated personalized recommendations based on your current Air
+          Quality Index (AQI).
+        </p>
+
+        <div className="health-grid">
+          {/* General recommendation (HealthAdvice component) */}
+          <div className="health-left">
+            <HealthAdvice aqi={bestAQI} />
+          </div>
+
+          {/* Detailed AI cards */}
+          <div className="health-right">
+            <div
+              className={`advice-tile ${
+                bestAQI <= 50
+                  ? "good"
+                  : bestAQI <= 100
+                  ? "moderate"
+                  : bestAQI <= 150
+                  ? "warn"
+                  : "alert"
+              }`}
+            >
+              <h4>😷 Outdoor Activity</h4>
+              <p>
+                {bestAQI <= 50 &&
+                  "Air quality is great — enjoy outdoor exercise!"}
+                {bestAQI > 50 &&
+                  bestAQI <= 100 &&
+                  "It’s safe for most, but sensitive individuals should be cautious."}
+                {bestAQI > 100 &&
+                  bestAQI <= 150 &&
+                  "Limit prolonged outdoor exertion, especially if you have asthma."}
+                {bestAQI > 150 &&
+                  "Avoid outdoor activities; wear a mask if you must go out."}
+              </p>
+            </div>
+
+            <div
+              className={`advice-tile ${
+                bestAQI <= 50
+                  ? "good"
+                  : bestAQI <= 100
+                  ? "moderate"
+                  : bestAQI <= 150
+                  ? "warn"
+                  : "alert"
+              }`}
+            >
+              <h4>🏠 Indoor Air Quality</h4>
+              <p>
+                {bestAQI <= 50 &&
+                  "Keep your windows open — fresh air helps ventilation."}
+                {bestAQI > 50 &&
+                  bestAQI <= 100 &&
+                  "Keep indoor plants or air purifiers active for better air."}
+                {bestAQI > 100 &&
+                  bestAQI <= 150 &&
+                  "Use air purifiers; avoid burning candles or incense indoors."}
+                {bestAQI > 150 &&
+                  "Keep windows closed and run air purifiers continuously."}
+              </p>
+            </div>
+
+            <div
+              className={`advice-tile ${
+                bestAQI <= 50
+                  ? "good"
+                  : bestAQI <= 100
+                  ? "moderate"
+                  : bestAQI <= 150
+                  ? "warn"
+                  : "alert"
+              }`}
+            >
+              <h4>👶 Sensitive Groups</h4>
+              <p>
+                {bestAQI <= 50 &&
+                  "Children, elderly, and patients can continue regular activities safely."}
+                {bestAQI > 50 &&
+                  bestAQI <= 100 &&
+                  "Sensitive groups should monitor symptoms or limit exposure."}
+                {bestAQI > 100 &&
+                  bestAQI <= 150 &&
+                  "Reduce outdoor time; consult doctors if breathing discomfort occurs."}
+                {bestAQI > 150 &&
+                  "Stay indoors and avoid exposure; consult healthcare if symptoms persist."}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {airnow?.aqi && (
-        <div className="cards-grid">
-          <div className="card">
-            <h3>AirNow Parameters</h3>
-            <ul className="kv">
-              {Object.entries(airnow.aqi).map(([k, v]) => (
-                <li key={k}>
-                  <span>{k}</span>
-                  <b>{v}</b> <small>{airnow.category[k]}</small>
-                </li>
-              ))}
-            </ul>
+        <section className="analysis-pro">
+          <h2>📊 Air Quality Insights</h2>
+          <p className="analysis-sub">
+            Explore how pollutants and satellite data interact — powered by NASA
+            TEMPO + AirNow synergy.
+          </p>
 
-            <h4>AQI Trend</h4>
-            <ResponsiveContainer width="100%" height={240}>
-              <LineChart data={airnowSeries}>
-                <CartesianGrid stroke="#334" strokeDasharray="5 5" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#0b3d91"
-                  strokeWidth={3}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+          <div className="analysis-grid">
+            {/* LEFT — AIRNOW CHARTS */}
+            <div className="card chart-card">
+              <h3>📈 AirNow Parameters</h3>
+              <ul className="kv compact">
+                {Object.entries(airnow.aqi).map(([k, v]) => (
+                  <li key={k}>
+                    <span>{k}</span>
+                    <b>{v}</b> <small>{airnow.category[k]}</small>
+                  </li>
+                ))}
+              </ul>
 
-            <h4>AQI Comparison</h4>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={airnowSeries}>
-                <CartesianGrid stroke="#334" strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="value" fill="#f1c40f" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="card">
-            <h3>🛰️ TEMPO Granules</h3>
-            <p>Found: {tempoGranules.length}</p>
-
-            <GranuleTimelineSlider
-              items={tempoTimeline}
-              value={selectedGranuleIdx}
-              onChange={setSelectedGranuleIdx}
-            />
-
-            {activeGranule ? (
-              <div className="granule-box">
-                <div className="granule-title">{activeGranule.title}</div>
-                <div className="granule-time">
-                  {new Date(activeGranule.time_start).toLocaleString()} →{" "}
-                  {new Date(activeGranule.time_end).toLocaleString()}
-                </div>
+              <div className="chart-wrap">
+                <h4>AQI Trend (Line)</h4>
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart data={airnowSeries}>
+                    <CartesianGrid stroke="#334" strokeDasharray="5 5" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#56b6f7"
+                      strokeWidth={3}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 6 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
-            ) : (
-              <p>📡 No TEMPO data available.</p>
-            )}
+
+              <div className="chart-wrap">
+                <h4>Pollutant Comparison (Bar)</h4>
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={airnowSeries}>
+                    <CartesianGrid stroke="#334" strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="value" fill="#f1c40f" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* RIGHT — TEMPO TIMELINE */}
+            <div className="card tempo-card">
+              <h3>🛰️ TEMPO Data Timeline</h3>
+              <p>
+                Monitor hourly satellite granules captured by TEMPO in
+                geostationary orbit.
+              </p>
+
+              <GranuleTimelineSlider
+                items={tempoTimeline}
+                value={selectedGranuleIdx}
+                onChange={setSelectedGranuleIdx}
+              />
+
+              {activeGranule ? (
+                <div className="granule-box glassy">
+                  <div className="granule-title">{activeGranule.title}</div>
+                  <div className="granule-time">
+                    ⏱ {new Date(activeGranule.time_start).toLocaleString()} →{" "}
+                    {new Date(activeGranule.time_end).toLocaleString()}
+                  </div>
+                  <div className="granule-status">
+                    ✅ Data synced successfully
+                  </div>
+                </div>
+              ) : (
+                <p>📡 No TEMPO data available.</p>
+              )}
+            </div>
           </div>
-        </div>
+
+          {/* AI Analysis Note */}
+          <div className="ai-analysis-note">
+            🤖 AI detects correlations between <b>NO₂</b> levels and wind speed
+            variations. Expect reduced pollution as wind increases.
+          </div>
+        </section>
       )}
     </div>
   );

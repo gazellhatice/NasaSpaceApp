@@ -35,12 +35,12 @@ export default function MapView({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* Bulut overlay (CSS anim) */}
+        {/* Cloud overlay (CSS anim) */}
         {showClouds && <div className="cloud-overlay" />}
 
-        {/* Isı haritası: istasyon yoğunlukları */}
+        {/* Heat map: station densities */}
         {heatPoints.map((p, idx) => {
-          // yoğunluğa göre yarıçap ve renk
+          // radius and color according to density
           const intensity = Math.max(0, Math.min(300, p.intensity));
           const r = 10 + (intensity / 300) * 30; // 10..40 px
           const color =
@@ -58,7 +58,7 @@ export default function MapView({
           );
         })}
 
-        {/* Kullanıcı pin'i */}
+        {/* User PIN */}
         <Marker position={center} icon={markerIcon(markerColor)}>
           {tooltipText && <Tooltip direction="top">{tooltipText}</Tooltip>}
         </Marker>
