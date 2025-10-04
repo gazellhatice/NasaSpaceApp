@@ -1,0 +1,278 @@
+.dashboard {
+  font-family: 'Segoe UI', sans-serif;
+  padding: 20px;
+  color: #222;
+}
+
+.dashboard h1 {
+  color: #0b3d91;
+  margin-bottom: 10px;
+}
+
+.control-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.inputs input, .inputs button {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.inputs button {
+  background: #0b3d91;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.inputs button:hover {
+  background: #1e4fb1;
+}
+
+/* Layout grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Map */
+.map-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+/* Data cards */
+.data-cards .card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.error-card {
+  background: #e74c3c;
+  color: white;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+/* AQI Highlight Card */
+.aqi-card {
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  margin-bottom: 20px;
+}
+.aqi-card h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.aqi-value {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.advisory {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 10px;
+  color: #fff;
+}
+
+.weather-card ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.weather-card li {
+  margin: 5px 0;
+}
+
+/* --- Pro NASA theme --- */
+.dashboard.pro {
+  --bg:#0a0f1f; --panel:#11182e; --glass:rgba(255,255,255,.06);
+  --txt:#eaf2ff; --accent:#0b3d91; --muted:#8aa0c5;
+  background: radial-gradient(1200px 800px at 70% -20%, #182649 0%, #0a0f1f 50%, #070b16 100%);
+  min-height: 100vh; color: var(--txt);
+}
+
+.dashboard-header.glass {
+  background: linear-gradient(135deg, #041e4a 0%, #182649 80%);
+  color: #fff;
+  padding: 24px 28px;
+  border-radius: 14px;
+  box-shadow: 0 4px 25px rgba(0,0,0,0.4);
+}
+.dashboard-header.glass h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.dashboard-header.glass p {
+  color: #d3e0ff;
+  font-size: 0.95rem;
+}
+
+.dashboard-header .badges .badge{
+  background: #103069; color:#d7e7ff; padding:6px 10px; border-radius:10px; margin-left:6px; font-size:.85rem;
+  border:1px solid rgba(255,255,255,.08)
+}
+.badge.ok::before{content:"•"; margin-right:6px; color:#2ecc71}
+
+.top-grid{display:grid; grid-template-columns: 1.6fr 1.4fr; gap:20px; align-items:stretch}
+.card{background: var(--panel); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:16px; box-shadow: 0 8px 22px rgba(0,0,0,.35)}
+.big-card{display:flex; gap:16px}
+.big-card-left{display:flex; gap:16px; align-items:center}
+.big-card-right{flex:1; display:grid; gap:16px}
+
+.aqi-meta{display:flex; flex-direction:column; gap:6px}
+.aqi-number{font-size:40px; font-weight:800; letter-spacing:.5px}
+.aqi-advisory{color:#fff; opacity:.9}
+
+.ai-card.ok{border-left:4px solid #2ecc71}
+.ai-card.warn{border-left:4px solid #e67e22}
+.ai-card.alert{border-left:4px solid #e74c3c}
+
+.pro-map {
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  position: relative;
+}
+.pro-map h3 {
+  background: linear-gradient(90deg, rgba(11,61,145,0.7), rgba(24,38,73,0.4));
+  color: #eaf2ff;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 16px;
+  margin: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+.map-wrap {
+  position: relative;
+  height: 480px;
+  width: 100%;
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.map-wrap:hover {
+  box-shadow: 0 0 25px rgba(11, 61, 145, 0.5);
+}
+
+.map-root {
+  height: 100%;
+  width: 100%;
+  filter: brightness(0.9) contrast(1.1);
+  transition: filter 0.5s ease;
+}
+
+.map-root.leaflet-container {
+  background: #0a0f1f !important; /* koyu arka plan */
+}
+
+/* cloud overlay */
+.cloud-overlay{
+  opacity: 0.18;
+  mix-blend-mode: lighten;
+  position:absolute; inset:0; pointer-events:none;
+  background-image: url('https://assets.hgbrasil.com/weather/images/nuvens.png');
+  background-size: 700px auto; opacity: .25; animation: drift 60s linear infinite;
+
+}
+@keyframes drift{
+  0%{ transform: translateX(-20%) translateY(0) }
+  100%{ transform: translateX(20%) translateY(-10%) }
+}
+
+/* Harita üzerindeki OpenStreetMap attribution'ı gizleyelim */
+.leaflet-control-attribution {
+  display: none !important;
+}
+
+/* Harita zoom butonlarını tema uyumlu hale getirelim */
+.leaflet-control-zoom a {
+  background: rgba(20, 30, 60, 0.8);
+  color: #eaf2ff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.leaflet-control-zoom a:hover {
+  background: rgba(11, 61, 145, 0.9);
+}
+
+.dashboard.pro {
+  padding-top: 100px; /* navbar yüksekliği kadar boşluk ekle */
+}
+
+/* leaflet custom pin */
+.custom-pin .pin{width:16px; height:16px; border-radius:50%; box-shadow: 0 0 14px rgba(255,255,255,.3)}
+
+/* key-value list */
+.kv{list-style:none; padding:0; margin:0}
+.kv li{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,.08)}
+.kv li span{color:var(--muted)}
+
+/* granule slider */
+.granule-slider{margin-top:10px}
+.granule-slider input[type="range"]{width:100%}
+.granule-ticks{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+.granule-ticks .tick{font-size:.75rem; color:#b7c8ea; opacity:.7}
+.granule-ticks .tick.active{color:#fff; opacity:1; font-weight:700}
+
+/* voice assistant */
+.btn-voice{background:#0b3d91; color:#fff; border:none; padding:10px 14px; border-radius:12px; cursor:pointer}
+.btn-voice.on{background:#1f57bd}
+
+.offline-box {
+  background: rgba(255, 0, 0, 0.08);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  color: #ffb8b8;
+  padding: 20px;
+  border-radius: 14px;
+  text-align: center;
+  margin-bottom: 20px;
+  backdrop-filter: blur(8px);
+}
+.offline-box h3 {
+  margin-bottom: 6px;
+  font-weight: 700;
+  color: #ff7070;
+}
+
+.loading-card {
+  background: linear-gradient(90deg, #1b2745 25%, #27355a 50%, #1b2745 75%);
+  background-size: 400% 100%;
+  animation: shimmer 1.5s infinite;
+  height: 160px;
+  border-radius: 14px;
+  opacity: 0.6;
+}
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}

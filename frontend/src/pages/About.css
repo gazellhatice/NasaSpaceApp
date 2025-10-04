@@ -1,0 +1,304 @@
+.about-pro {
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at 70% -20%, #182649 0%, #0a0f1f 60%, #070b16 100%);
+  color: #eaf2ff;
+  padding-bottom: 60px;
+  min-height: 100vh;
+}
+
+/* HERO */
+.about-hero-pro.enhanced {
+  position: relative;
+  text-align: center;
+  padding: 160px 20px 140px;
+  color: #eaf2ff;
+  overflow: hidden;
+
+  /* 🌌 Arka plan resmi */
+  background: url("/src/images/about.jpeg") center/cover no-repeat;
+  background-attachment: fixed;
+}
+
+/* Koyu filtre (fotoğrafın üstüne gelir) */
+.about-hero-pro.enhanced::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 10, 25, 0.7); /* koyuluk */
+  backdrop-filter: blur(4px);
+  z-index: 1;
+}
+
+/* Yazılar üstte */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-content h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.hero-content .highlight {
+  color: #56b6f7;
+  text-shadow: 0 0 10px rgba(86,182,247,0.6);
+}
+
+.hero-line {
+  width: 120px;
+  height: 3px;
+  margin: 18px auto;
+  background: linear-gradient(90deg, #56b6f7, #2ecc71);
+  border-radius: 2px;
+}
+
+.hero-content p {
+  max-width: 700px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  color: #cdd8f5;
+  line-height: 1.7;
+}
+
+/* Hafif yıldız efekti istersen */
+.about-hero-pro.enhanced::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("https://www.transparenttextures.com/patterns/stardust.png");
+  opacity: 0.15;
+  z-index: 0;
+}
+
+
+.tempo-logo {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 12px rgba(86,182,247,0.6));
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.hero-content h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.hero-content .highlight {
+  color: #56b6f7;
+  text-shadow: 0 0 10px rgba(86,182,247,0.6);
+}
+
+.hero-line {
+  width: 120px;
+  height: 3px;
+  margin: 18px auto;
+  background: linear-gradient(90deg, #56b6f7, #2ecc71);
+  border-radius: 2px;
+}
+
+.hero-content p {
+  max-width: 700px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  color: #cdd8f5;
+  line-height: 1.7;
+}
+
+
+.about-hero-pro h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.about-hero-pro p {
+  max-width: 750px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* ABOUT CARDS */
+.about-card {
+  max-width: 900px;
+  margin: 60px auto;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 30px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+.about-card h2 {
+  color: #56b6f7;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+.about-card p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #dbe4ff;
+}
+.about-card.glassy {
+  background: linear-gradient(120deg, rgba(11,61,145,0.4), rgba(24,38,73,0.2));
+}
+
+/* AQI PARAMETERS GRID */
+.aqi-parameters {
+  max-width: 1100px;
+  margin: 70px auto;
+  text-align: center;
+  padding: 20px;
+}
+.aqi-parameters h2 {
+  color: #56b6f7;
+  margin-bottom: 20px;
+}
+.aqi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 25px;
+}
+.param-card {
+  border-radius: 14px;
+  padding: 20px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease;
+}
+.param-card:hover {
+  transform: translateY(-5px);
+}
+.param-card h3 {
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+.param-card p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* PARAM COLORS */
+.param-card.good {border-left: 4px solid #2ecc71;}
+.param-card.moderate {border-left: 4px solid #f1c40f;}
+.param-card.unhealthy {border-left: 4px solid #e67e22;}
+.param-card.ozone {border-left: 4px solid #3498db;}
+.param-card.so2 {border-left: 4px solid #9b59b6;}
+.param-card.co {border-left: 4px solid #e74c3c;}
+
+/* TIMELINE */
+.timeline-pro {
+  max-width: 900px;
+  margin: 80px auto;
+}
+.timeline-pro h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #56b6f7;
+}
+.timeline-container {
+  border-left: 3px solid #56b6f7;
+  padding-left: 30px;
+}
+.timeline-item {
+  margin-bottom: 40px;
+  position: relative;
+}
+.timeline-dot {
+  position: absolute;
+  left: -39px;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  background: #f1c40f;
+  border: 3px solid #56b6f7;
+  border-radius: 50%;
+}
+.timeline-content h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  color: #eaf2ff;
+}
+.timeline-content p {
+  margin: 0;
+  color: #dbe4ff;
+  line-height: 1.6;
+}
+
+/* AQI COLOR SCALE */
+.aqi-scale-pro {
+  max-width: 1000px;
+  margin: 80px auto;
+  text-align: center;
+  padding: 30px 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+}
+
+.aqi-scale-pro h2 {
+  color: #56b6f7;
+  margin-bottom: 12px;
+}
+
+.aqi-scale-pro p {
+  color: #cdd8f5;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+.aqi-scale-bar {
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.scale-segment {
+  flex: 1;
+  padding: 16px 8px;
+  color: #fff;
+  font-weight: 600;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Segment Colors (AirNow Standard) */
+.scale-segment.good { background: #00e400; }
+.scale-segment.moderate { background: #ffff00; color: #000; }
+.scale-segment.usg { background: #ff7e00; }
+.scale-segment.unhealthy { background: #ff0000; }
+.scale-segment.very-unhealthy { background: #8f3f97; }
+.scale-segment.hazardous { background: #7e0023; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .scale-segment {
+    flex: 100%;
+    font-size: 0.85rem;
+    padding: 10px;
+  }
+}

@@ -1,0 +1,127 @@
+.chatbot-wrapper {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 1000;
+}
+
+/* Floating Button */
+.chat-toggle-btn {
+  background: #0b3d91;
+  color: white;
+  font-size: 24px;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+.chat-toggle-btn:hover {
+  background: #123c7c;
+  transform: scale(1.05);
+}
+
+/* Chat Window */
+.chatbot-window {
+  width: 340px;
+  height: 450px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-right: 0;
+}
+
+/* Header */
+.chat-header {
+  background: #0b3d91;
+  color: white;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.close-btn {
+  background: none;
+  color: white;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Scrollable Body */
+.chat-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 8px 10px 10px;
+  scroll-behavior: smooth;
+}
+.chat-body::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-body::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Ortak mesaj stili */
+.chat-msg {
+  padding: 8px 12px;
+  border-radius: 12px;
+  line-height: 1.4;
+  word-wrap: break-word;
+  max-width: 90%;
+  width: fit-content;
+}
+
+/* 💬 Kullanıcı mesajı (senin mesajların) */
+.chat-msg.user {
+  background: #0b3d91;
+  color: white;
+  margin-left: auto; /* 🔹 tamamen sağa hizalar */
+  margin-right: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* 🤖 Bot mesajı */
+.chat-msg.bot {
+  background: #f2f2f2;
+  color: #333;
+  margin-right: auto; /* 🔹 tamamen sola hizalar */
+  border-bottom-left-radius: 0;
+}
+
+/* Input */
+.chat-input {
+  display: flex;
+  border-top: 1px solid #ddd;
+  padding: 8px;
+  flex-shrink: 0;
+}
+.chat-input input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-right: 5px;
+}
+.chat-input button {
+  background: #ffd700;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
