@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import HealthAdvice from "../components/HealthAdvice";
 import MapView from "../MapView";
 import { fetchCombined } from "../api";
 import "./AirQuality.css";
@@ -104,6 +105,15 @@ export default function AirQuality() {
 
   const advisory = advisoryMessage(bestAQI);
 
+  // 🌈 Dynamic theme color based on AQI
+  useEffect(() => {
+    if (bestAQI != null) {
+      const color = aqiColor(bestAQI);
+      document.body.style.transition = "background 1s ease";
+      document.body.style.background = `radial-gradient(circle at 70% -20%, ${color}22 0%, #0a0f1f 70%)`;
+    }
+  }, [bestAQI]);
+
   // Isı haritası noktaları (OpenAQ verisinden normalize yoğunluk)
   const heatPoints = useMemo(() => {
     if (!openaq.length) return [];
@@ -149,7 +159,8 @@ export default function AirQuality() {
         <div className="branding">
           <h1>🚀 TEMPO Assistant</h1>
           <p>
-            Real-time air quality intelligence dashboard with NASA TEMPO + AirNow + OpenAQ + Open-Meteo.
+            Real-time air quality intelligence dashboard with NASA TEMPO +
+            AirNow + OpenAQ + Open-Meteo.
           </p>
         </div>
         <div className="header-actions">
@@ -210,20 +221,51 @@ export default function AirQuality() {
       <div className="top-grid">
         <div className="card big-card">
           <div className="big-card-left">
-            <AQIGauge value={bestAQI ?? 0} />
-            <div className="aqi-meta">
-              <div className="aqi-number" style={{ color: aqiColor(bestAQI) }}>
-                {bestAQI ?? "—"}
-              </div>
-              <div className="aqi-advisory">{advisory}</div>
-              {weather && (
-                <div className="wx-line">
-                  🌤 {weather.temperature_2m}°C · 💨 {weather.windspeed_10m} m/s
-                  · 💧 {weather.relative_humidity_2m}%
+            <div className="aqi-top">
+              <AQIGauge value={bestAQI ?? 0} />
+              <div className="aqi-meta">
+                <div
+                  className="aqi-number"
+                  style={{ color: aqiColor(bestAQI) }}
+                >
+                  {bestAQI ?? "—"}
                 </div>
-              )}
+                <div className="aqi-advisory">{advisory}</div>
+                {weather && (
+                  <div className="wx-line">
+                    🌤 {weather.temperature_2m}°C · 💨 {weather.windspeed_10m}{" "}
+                    m/s · 💧 {weather.relative_humidity_2m}%
+                  </div>
+                )}
+                {airnowSeries.length > 1 && (
+                  <div className="aqi-trend-line">
+                    {(() => {
+                      const trend =
+                        airnowSeries[airnowSeries.length - 1].value -
+                        airnowSeries[0].value;
+                      if (trend < 0)
+                        return (
+                          <p>
+                            🌤 AQI improved by {Math.abs(trend)} points since
+                            yesterday.
+                          </p>
+                        );
+                      if (trend > 0)
+                        return (
+                          <p>
+                            ⚠️ AQI increased by {trend} points since yesterday.
+                          </p>
+                        );
+                      return (
+                        <p>😌 AQI remains stable compared to yesterday.</p>
+                      );
+                    })()}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
+
           <div className="big-card-right">
             <AIExplanationCard
               aqi={bestAQI}
@@ -251,6 +293,9 @@ export default function AirQuality() {
             showClouds={true}
           />
         </div>
+      </div>
+      <div className="card health-wide">
+        <HealthAdvice aqi={bestAQI} />
       </div>
 
       {airnow?.aqi && (

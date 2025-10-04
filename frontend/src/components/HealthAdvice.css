@@ -1,0 +1,76 @@
+.health-advice {
+  margin-top: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 12px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  width: 100%; /* sol kartın genişliğini otomatik al */
+}
+
+
+.health-advice h3 {
+  color: #56b6f7;
+  margin-bottom: 15px;
+  text-align: left;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+/* 💡 Kartları yatay hizalayalım */
+/* 💫 Kartları tam yatay tek sıraya diz */
+.advice-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 14px;
+  flex-wrap: nowrap; /* 🔹 artık alt satıra geçmeyecek */
+}
+
+/* Kart stilleri */
+.advice-card {
+  flex: 1;                /* 🔹 Hepsi eşit genişlikte */
+  background: rgba(11, 61, 145, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: #eaf2ff;
+  text-align: left;
+  transition: transform 0.3s ease, background 0.3s ease;
+  min-width: 0; /* 🔹 flex shrink hatası olmasın */
+}
+
+.advice-card:hover {
+  transform: translateY(-5px);
+  background: rgba(11, 61, 145, 0.25);
+}
+
+.advice-card h4 {
+  color: #56b6f7;
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.advice-card p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #cdd8f5;
+}
+
+/* Mobil uyum: küçük ekranda alt alta geçsin */
+@media (max-width: 992px) {
+  .advice-grid {
+    flex-wrap: wrap; /* 🔹 küçük ekranda yeniden kır */
+  }
+  .advice-card {
+    flex: 1 1 calc(50% - 10px);
+  }
+}
+
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+

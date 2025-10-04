@@ -140,9 +140,66 @@
 
 .top-grid{display:grid; grid-template-columns: 1.6fr 1.4fr; gap:20px; align-items:stretch}
 .card{background: var(--panel); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:16px; box-shadow: 0 8px 22px rgba(0,0,0,.35)}
-.big-card{display:flex; gap:16px}
-.big-card-left{display:flex; gap:16px; align-items:center}
-.big-card-right{flex:1; display:grid; gap:16px}
+.big-card { 
+  display: flex; 
+  gap: 16px; 
+  align-items: flex-start;   
+}
+.big-card-left { 
+  flex: 1; 
+  min-width: 0; 
+}
+.big-card-right {
+  flex: 0 0 300px;           
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;  
+  align-items: stretch;
+  gap: 12px;
+  align-self: flex-start;       
+}
+
+.ai-card {
+  align-self: stretch;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 4px solid #2ecc71;  
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-top: 0;                  
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+.ai-card h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  color: #56b6f7;
+}
+.ai-card p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #cdd8f5;
+}
+
+
+/* Bottom card view (HealthAdvice) */
+.sub-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 10px 14px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+  width: 100%;
+}
+
+/* HealthAdvice içindeki kartlar biraz daha sadeleşsin */
+.sub-card .health-advice {
+  margin-top: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
 
 .aqi-meta{display:flex; flex-direction:column; gap:6px}
 .aqi-number{font-size:40px; font-weight:800; letter-spacing:.5px}
@@ -160,6 +217,19 @@
   overflow: hidden;
   position: relative;
 }
+/* 📏 Harita yüksekliğini sol kartla eşitle */
+.pro-map {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  height: 100%;
+}
+
+.pro-map .map-wrap {
+  height: 100%;
+  min-height: 400px; /* AQI kartı ile yaklaşık eşit yükseklik */
+}
+
 .pro-map h3 {
   background: linear-gradient(90deg, rgba(11,61,145,0.7), rgba(24,38,73,0.4));
   color: #eaf2ff;
@@ -245,7 +315,23 @@
 .granule-ticks .tick.active{color:#fff; opacity:1; font-weight:700}
 
 /* voice assistant */
-.btn-voice{background:#0b3d91; color:#fff; border:none; padding:10px 14px; border-radius:12px; cursor:pointer}
+.btn-voice {
+  background: #0b3d91;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;     
+  font-size: 0.85rem;     
+  border-radius: 10px;
+  cursor: pointer;
+  align-self: flex-end;   
+  width: fit-content;
+  transition: 0.2s ease;
+}
+.btn-voice:hover {
+  background: #1f57bd;
+  transform: scale(1.05);
+}
+
 .btn-voice.on{background:#1f57bd}
 
 .offline-box {
@@ -275,4 +361,64 @@
 @keyframes shimmer {
   0% { background-position: -400px 0; }
   100% { background-position: 400px 0; }
+}
+
+.aqi-trend-line {
+  font-size: 0.9rem;
+  color: #cdd8f5;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* 🔹 Gauge + Metinler yatay */
+.aqi-top {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Gauge’ün kendi alanını sabitleyelim */
+.aqi-top .gauge-container {
+  flex-shrink: 0;
+}
+
+/* Sağdaki metin kısmı (15, Good vs.) */
+.aqi-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+}
+
+/* 🔹 Sağ tarafa taşmadan sadece sol panelin altına oturur */
+.health-sub-card {
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* İçteki grid’i yatay göster */
+.health-sub-card .advice-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 14px;
+}
+
+.health-sub-card .advice-card {
+  flex: 1;
+  background: rgba(11, 61, 145, 0.15);
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: #eaf2ff;
+  text-align: left;
+  transition: 0.3s;
+}
+
+.health-sub-card .advice-card:hover {
+  transform: translateY(-5px);
+  background: rgba(11, 61, 145, 0.25);
 }
